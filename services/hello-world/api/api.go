@@ -24,7 +24,7 @@ func Router() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", SetContentTypeJson(RootEndpoint)).Methods(http.MethodGet)
 	router.HandleFunc("/get-version", SetContentTypeJson(GetVersion)).Methods(http.MethodGet)
-	router.HandleFunc("/post-hello", SetContentTypeJson(ParseJsonBody(LoginEndpointPOST))).Methods(http.MethodPost)
+	router.HandleFunc("/post-hello", SetContentTypeJson(ParseJsonBody(PostHelloEndpointPost))).Methods(http.MethodPost)
 	router.NotFoundHandler = SetContentTypeJson(NotFoundEndpoint)
 	router.MethodNotAllowedHandler = SetContentTypeJson(MethodNotAllowed)
 	return router
@@ -41,16 +41,16 @@ func GetVersion(w http.ResponseWriter, _ *http.Request) {
 	response.ServeSuccessResponse(w, "Service is running version: "+VERSION, nil)
 }
 
-func PostHelloEndpointPort(w http.ResponseWriter, r *http.Request){
+func PostHelloEndpointPost(w http.ResponseWriter, r *http.Request){
 	var posthelloreq models.PostHelloReqBody
 	body := GetDataFromContext(r, "body")
 	json.Unmarshal([]byte(body), &posthelloreq)
 
-	response.ServeSuccessResponse(w, "Hello, I will mail you at ", posthelloreq.Name, posthelloreq.Email)
+	response.ServeSuccessResponse(w, "Hello, I will mail you at ", nil) // posthelloreq.Name, posthelloreq.EmailID)
 
 
 }
-
+/*
 func LoginEndpointPOST(w http.ResponseWriter, r *http.Request) {
 	var (
 		cred models.UserCredentials
@@ -94,6 +94,8 @@ func LoginEndpointPOST(w http.ResponseWriter, r *http.Request) {
 	}
 	response.ServeSuccessResponse(w, "Verification Code Sent", d)
 }
+
+ */
 
 func MethodNotAllowed(w http.ResponseWriter, _ *http.Request) {
 	response.ServeFailureResponse(w, http.StatusMethodNotAllowed, "The place you want to visit is over there, but you are entering through wrong gate! 😛", nil)
